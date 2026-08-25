@@ -1,0 +1,61 @@
+name: Unzip
+
+on:
+  push:
+    paths:
+      - 'authhub.zip'               # 当上传这个精确文件时自动触发
+  workflow_dispatch:                 # 手动触发（推荐）
+
+jobs:
+  unzip-and-commit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write               # 必须，否则 push 会失败
+
+    steps:
+      - name: 克隆仓库
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0              # 获取完整历史
+
+      - name: 解压 authhub.zip（确保在根目录）
+        run: |
+          # 安装 unzip
+          sudo apt-get update && sudo apt-get install -y unzip
+
+          # 清空根目录（保留 .git 等隐藏文件）
+          shopt -s dotglob
+          for file in *; do
+            case "$file" in
+              .git|authhub.zip|README.md|.github|.gitignore|LICENSE|docs|static) continue ;;
+              *) rm -rf "$file" ;;
+            esac
+          done
+
+          # 解压 authhub.zip（-o 覆盖已存在的文件）
+          unzip -o authhub.zip -d .
+
+          # 清理解压的中间文件夹
+          rm -rf extracted 2>/dev/null || true
+
+          # 删除压缩包（彻底）
+          rm -f authhub.zip
+
+          echo "Unzip Done"
+          ls -la
+
+      - name: Git 配置
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: 提交并推送
+        run: |
+          git add .
+          git commit -m "LsyvDlsv" || echo "Noing"
+          git push origin ${{ github.ref }}
+
+      - name: 验证解压结果
+        run: |
+          echo "📁 主要文件示例："
+          ls -la | head -30
