@@ -1,6 +1,6 @@
 # AuthHub — 自建 OAuth 2.0 统一身份认证平台
 
-你的网站/应用本身就是「Google 账号」：任何第三方网站和 App 通过标准 **OAuth 2.0 授权码流程**接入 AuthHub，用户使用一个 AuthHub 账号处处登录。
+通过 **OAuth 2.0 **接入 AuthHub，用户使用一个 AuthHub 账号处处登录。
 
 PHP 8.1+ · MySQL/MariaDB · Apache · 零依赖
 
